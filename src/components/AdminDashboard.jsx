@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import { useToast } from '@/components/ui/use-toast';
 import { useData } from '@/hooks/useData';
 import { TabsContent } from '@/components/ui/tabs';

@@ -37,6 +37,8 @@ function ProtectedRoute({ children, user, isAuthenticated, targetRole }) {
 
 function App() {
   const { user, login, quickLogin, signup, logout, loading, isAuthenticated } = useAuth();
+  console.log("App initialized", { user, loading, isAuthenticated });
+
 
   if (loading) {
     return (

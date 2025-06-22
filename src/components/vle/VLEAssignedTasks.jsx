@@ -151,15 +151,16 @@ export function VLEAssignedTasks({ user }) {
           </Card>
         ) : (
           userTasks.map((task, index) => (
-            <motion.custom
-              key={task.id}
-              custom={index}
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              className="h-full"
-              layout
-            >
+            <motion.div
+  key={task.id}
+  custom={index}
+  variants={cardVariants}
+  initial="hidden"
+  animate="visible"
+  className="h-full"
+  layout
+>
+
             <Card className="bg-white border-slate-200 text-slate-700 shadow-xl h-full flex flex-col card-hover">
               <CardHeader className="pb-4">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -214,7 +215,7 @@ export function VLEAssignedTasks({ user }) {
                 </div>
               </CardFooter>
             </Card>
-            </motion.custom>
+            </motion.div>
           ))
         )}
       </div>
