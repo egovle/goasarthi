@@ -1,0 +1,284 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%; 
+    --foreground: 224 71% 4%; 
+    
+    --card: 0 0% 100%; 
+    --card-foreground: 224 71% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    --primary: 217 91% 60%; 
+    --primary-foreground: 0 0% 98%; 
+
+    --secondary: 210 40% 96.1%; 
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 92%; 
+    --muted-foreground: 215 20% 55%; 
+
+    --accent: 210 40% 96.1%; 
+    --accent-foreground: 222 47% 11%; 
+
+
+    --destructive: 0 72% 51%; 
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 32% 91%; 
+    --input: 214 32% 91%; 
+    --ring: 217 91% 60%; 
+
+    --radius: 0.75rem; 
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 98%;
+    --card: 222 47% 15%; 
+    --card-foreground: 0 0% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 217 91% 60%; 
+    --primary-foreground: 222 47% 11%; 
+    --secondary: 217 33% 20%; 
+    --secondary-foreground: 0 0% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 20%; 
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 40%; 
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 25%; 
+    --input: 217 33% 25%;
+    --ring: 217 91% 60%; 
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-inter antialiased text-sm sm:text-base;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-poppins font-semibold text-foreground;
+  }
+  
+  h1 { @apply text-2xl sm:text-3xl md:text-4xl; }
+  h2 { @apply text-xl sm:text-2xl md:text-3xl; }
+  h3 { @apply text-lg sm:text-xl md:text-2xl; }
+  h4 { @apply text-base sm:text-lg md:text-xl; }
+  
+  label {
+    @apply text-xs sm:text-sm;
+  }
+  
+  input, select, textarea {
+    @apply text-xs sm:text-sm;
+  }
+  
+  button {
+     @apply text-xs sm:text-sm;
+  }
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.gradient-bg {
+  background: linear-gradient(145deg, hsl(var(--primary)) 0%, hsl(230, 90%, 55%) 100%);
+}
+
+.glass-effect {
+  background: hsla(0, 0%, 100%, 0.15); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsla(0, 0%, 100%, 0.25);
+  @apply shadow-xl;
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01); /* Slightly less lift for mobile-first approach */
+  box-shadow: 0 15px 30px -10px hsla(var(--primary) / 0.2); /* Softer shadow */
+}
+
+.card-hover-vle { 
+  @apply transition-all duration-300 ease-out;
+}
+.card-hover-vle:hover { 
+  @apply transform -translate-y-1 scale-[1.01] shadow-primary/25 shadow-xl; /* Adjusted shadow */
+  border-color: hsl(var(--primary) / 0.4); /* Adjusted border */
+}
+
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out; /* Faster fade */
+}
+.animate-slide-in-up {
+  animation: slideInUp 0.4s ease-out; /* Faster slide */
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* Less distance */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-badge {
+  @apply px-2 py-0.5 text-[10px] sm:text-xs rounded-full font-medium flex items-center gap-1; /* Smaller padding and font */
+}
+
+.status-pending {
+  @apply bg-yellow-100 text-yellow-700 border border-yellow-300 status-badge;
+}
+.status-accepted {
+  @apply bg-sky-100 text-sky-700 border border-sky-300 status-badge;
+}
+.status-ack-submitted {
+  @apply bg-indigo-100 text-indigo-700 border border-indigo-300 status-badge;
+}
+.status-additional-docs-vle {
+  @apply bg-orange-100 text-orange-700 border border-orange-300 status-badge;
+}
+.status-additional-docs-dept {
+  @apply bg-amber-100 text-amber-700 border border-amber-300 status-badge;
+}
+.status-in-progress {
+  @apply bg-blue-100 text-blue-700 border border-blue-300 status-badge;
+}
+.status-assigned {
+  @apply bg-cyan-100 text-cyan-700 border border-cyan-300 status-badge;
+}
+.status-completed {
+  @apply bg-emerald-100 text-emerald-700 border border-emerald-300 status-badge;
+}
+.status-rejected {
+  @apply bg-red-100 text-red-700 border border-red-300 status-badge;
+}
+
+
+/* Responsive TabsList */
+.tabs-list-responsive {
+  @apply grid grid-flow-col auto-cols-max gap-1 sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+}
+@media (max-width: 640px) { 
+  .tabs-list-responsive {
+    @apply grid-cols-1 gap-1; 
+  }
+  .tabs-list-responsive > button {
+    @apply w-full text-xs py-2; 
+  }
+}
+
+/* Admin Dashboard Tabs Container */
+.admin-tabs-container::-webkit-scrollbar {
+  height: 4px;
+}
+.admin-tabs-container::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 10px;
+}
+.admin-tabs-container::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
+}
+.admin-tabs-container {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.5) transparent;
+}
+
+/* VLE Dashboard Tabs Container - specific for horizontal scroll on smaller screens */
+.vle-tabs-container::-webkit-scrollbar {
+  height: 3px; 
+}
+.vle-tabs-container::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.4);
+  border-radius: 8px;
+}
+.vle-tabs-container::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
+}
+.vle-tabs-container {
+  scrollbar-width: thin; 
+  scrollbar-color: hsl(var(--primary) / 0.4) transparent; 
+}
+
+
+/* Custom Scrollbar (General) */
+::-webkit-scrollbar {
+  width: 6px; /* Slimmer scrollbar */
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background) / 0.3); /* More subtle track */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted) / 0.8); /* Slightly darker thumb */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+/* Input styling for Login page */
+.login-input {
+  @apply pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:ring-white/70 focus:border-white/50 h-11 text-sm; /* Adjusted height and font size */
+}
+.login-label {
+  @apply text-xs font-medium text-white/90; /* Smaller label */
+}
+
+/* Notification Badge */
+.notification-badge-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -3px; /* Adjusted position */
+  right: -3px; /* Adjusted position */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; /* Smaller badge */
+  height: 16px; /* Smaller badge */
+  border-radius: 50%;
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  font-size: 9px; /* Smaller font */
+  font-weight: bold;
+  border: 1px solid hsl(var(--background));
+}
