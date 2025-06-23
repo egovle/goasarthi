@@ -4,16 +4,7 @@ import { supabase } from '@/lib/supabaseClient.js';
 
 const AuthContext = createContext(null);
 
-const QUICK_LOGIN_USERS = [
-  { user_id_custom: 'ADMIN001', email: 'admin@egov.in', password: 'admin123', role: 'admin', name: 'Admin Goa', phone: '9876543210' },
-  { user_id_custom: 'VLE001', email: 'sayyed.vle@egov.in', password: 'password', role: 'vle', name: 'Sayyed', center: 'Panaji Center', phone: '9876543214' },
-  { user_id_custom: 'VLE002', email: 'veeresh.vle@egov.in', password: 'password', role: 'vle', name: 'Veeresh', center: 'Margao Center', phone: '9876543215' },
-  { user_id_custom: 'VLE003', email: 'ibrahim.vle@egov.in', password: 'password', role: 'vle', name: 'Ibrahim', center: 'Vasco Center', is_available: false, phone: '9876543216' },
-  { user_id_custom: 'VLE004', email: 'shubham.vle@egov.in', password: 'password', role: 'vle', name: 'Shubham', center: 'Mapusa Center', phone: '9876543217' },
-  { user_id_custom: 'CUST001', email: 'sahil.customer@egov.in', password: 'password', role: 'customer', name: 'Sahil', address: '123 Beach View, Panaji', phone: '9876543211' },
-  { user_id_custom: 'CUST002', email: 'viraj.customer@egov.in', password: 'password', role: 'customer', name: 'Viraj', address: '456 River Side, Margao', phone: '9876543212' },
-  { user_id_custom: 'CUST003', email: 'manoj.customer@egov.in', password: 'password', role: 'customer', name: 'Manoj', address: '789 Hill Top, Vasco', phone: '9876543213' },
-];
+
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -146,7 +137,7 @@ export const AuthProvider = ({ children }) => {
     let errorCount = 0;
     const errors = [];
     
-    const usersToCreate = QUICK_LOGIN_USERS.filter(u => u.email !== 'admin@egov.in');
+   
 
     for (const userToSeed of usersToCreate) {
       try {
@@ -201,7 +192,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated, 
     refreshUser, 
     updateUserDetailsInSupabase, 
-    QUICK_LOGIN_USERS, 
+    
     seedUsers 
   }), [user, loading, isAuthenticated, login, quickLogin, signup, logout, refreshUser, updateUserDetailsInSupabase, seedUsers]);
 

@@ -15,7 +15,7 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { QUICK_LOGIN_USERS, seedUsers } = useAuth();
+  
 
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
@@ -81,9 +81,7 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
     if (result.errors?.length > 0) console.log('Some users may already exist:', result.errors);
   };
 
-  const customerUsers = QUICK_LOGIN_USERS.filter(u => u.role === 'customer');
-  const vleUsers = QUICK_LOGIN_USERS.filter(u => u.role === 'vle');
-  const adminUser = QUICK_LOGIN_USERS.find(u => u.role === 'admin');
+
 
   return (
     <div className="min-h-screen gradient-bg flex items-center justify-center p-4 overflow-hidden">
