@@ -1,5 +1,4 @@
-
-import React, { createContext } from 'react';
+import React, { createContext, useContext } from 'react';
 
 export const ServiceContext = createContext(null);
 
@@ -20,3 +19,8 @@ export const ServiceProvider = ({ children }) => {
   };
   return <ServiceContext.Provider value={value}>{children}</ServiceContext.Provider>;
 };
+
+// ✅ ADD THIS EXPORT TO FIX THE BUILD ISSUE
+export function useServices() {
+  return useContext(ServiceContext);
+}
