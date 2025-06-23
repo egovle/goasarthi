@@ -1,3 +1,17 @@
+import { useAuth } from '@/components/contexts/AuthContext';
+
+function App() {
+  const { loading } = useAuth();
+
+  if (loading) return <div>Loading app...</div>;
+
+  return (
+    <Routes>
+      {/* Your routes here */}
+    </Routes>
+  );
+}
+
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth.jsx';
 import { LoginForm } from '@/components/LoginForm';

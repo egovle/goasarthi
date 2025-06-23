@@ -1,3 +1,10 @@
+// One-time reset for old corrupted data
+if (localStorage.getItem('reset_done') !== 'true') {
+  localStorage.clear();
+  sessionStorage.clear();
+  document.cookie = ''; // clear cookies
+  localStorage.setItem('reset_done', 'true');
+}
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
