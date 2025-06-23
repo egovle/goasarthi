@@ -1,19 +1,5 @@
-import { useAuth } from '@/components/contexts/AuthContext';
-
-function App() {
-  const { loading } = useAuth();
-
-  if (loading) return <div>Loading app...</div>;
-
-  return (
-    <Routes>
-      {/* Your routes here */}
-    </Routes>
-  );
-}
-
 import React from 'react';
-import { useAuth } from '@/hooks/useAuth.jsx';
+import { useAuth } from '@/contexts/AuthContext.jsx'; // ✅ Correct source
 import { LoginForm } from '@/components/LoginForm';
 import { CustomerDashboard } from '@/components/CustomerDashboard';
 import { VLEDashboard } from '@/components/VLEDashboard';
@@ -25,7 +11,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CustomerProviders } from '@/contexts/role-providers/CustomerProviders.jsx';
 import { VLEProviders } from '@/contexts/role-providers/VLEProviders.jsx';
 import { AdminProviders } from '@/contexts/role-providers/AdminProviders.jsx';
-import { ServiceProvider } from '@/contexts/ServiceContext'; // ✅ Added for VLE route
+import { ServiceProvider } from '@/contexts/ServiceContext.jsx'; // ✅ Ensure correct extension
 
 function ProtectedRoute({ children, user, isAuthenticated, targetRole }) {
   const location = useLocation();
@@ -105,7 +91,7 @@ function App() {
             path="/vle-dashboard" 
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated} user={user} targetRole="vle">
-                <ServiceProvider> {/* ✅ Services available only for VLE */}
+                <ServiceProvider>
                   <VLEProviders>
                     <VLEDashboard user={user} onLogout={logout} />
                   </VLEProviders>
