@@ -23,44 +23,36 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const loadSession = async () => {
+    const loadUser = async () => {
       setLoading(true);
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+      const { data: { user: authUser }, error } = await supabase.auth.getUser();
 
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-      }
-
-      const supabaseUser = session?.user;
-      if (supabaseUser) {
-        const profile = await fetchProfile(supabaseUser);
-        setUser(profile);
-        setIsAuthenticated(!!profile);
-      } else {
+      if (error) {
+        console.error("Supabase auth error:", error.message);
         setUser(null);
         setIsAuthenticated(false);
-      }
-      setLoading(false);
-    };
-
-    loadSession();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        const supabaseUser = session?.user;
-        if (supabaseUser) {
-          const profile = await fetchProfile(supabaseUser);
+      } else if (authUser) {
+        const profile = await fetchProfile(authUser);
+        if (profile) {
           setUser(profile);
-          setIsAuthenticated(!!profile);
+          setIsAuthenticated(true);
         } else {
           setUser(null);
           setIsAuthenticated(false);
         }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
       }
-    );
+
+      setLoading(false);
+    };
+
+    loadUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      loadUser(); // Reload user on login/logout
+    });
 
     return () => {
       authListener?.subscription?.unsubscribe();
@@ -88,7 +80,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signup = useCallback(async (signupData) => {
-    const { email, password, phone, name, address } = signupData;
+    const { email, password, phone, name, address, role = 'customer' } = signupData;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -96,9 +88,9 @@ export const AuthProvider = ({ children }) => {
       options: {
         data: {
           name,
-          role: 'customer',
+          role,
           address,
-          user_id_custom: `CUST${Date.now().toString().slice(-4)}`,
+          user_id_custom: `${role.toUpperCase().slice(0, 3)}${Date.now().toString().slice(-4)}`,
           wallet_balance: 1000,
           is_available: true,
         },
@@ -106,6 +98,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     if (error) return { success: false, error: error.message };
+
     return {
       success: true,
       user: data.user,
