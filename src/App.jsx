@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth.jsx';
 import { LoginForm } from '@/components/LoginForm';
@@ -12,6 +11,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CustomerProviders } from '@/contexts/role-providers/CustomerProviders.jsx';
 import { VLEProviders } from '@/contexts/role-providers/VLEProviders.jsx';
 import { AdminProviders } from '@/contexts/role-providers/AdminProviders.jsx';
+import { ServiceProvider } from '@/contexts/ServiceContext'; // ✅ Added for VLE route
 
 function ProtectedRoute({ children, user, isAuthenticated, targetRole }) {
   const location = useLocation();
@@ -38,7 +38,6 @@ function ProtectedRoute({ children, user, isAuthenticated, targetRole }) {
 function App() {
   const { user, login, quickLogin, signup, logout, loading, isAuthenticated } = useAuth();
   console.log("App initialized", { user, loading, isAuthenticated });
-
 
   if (loading) {
     return (
@@ -92,9 +91,11 @@ function App() {
             path="/vle-dashboard" 
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated} user={user} targetRole="vle">
-                <VLEProviders>
-                  <VLEDashboard user={user} onLogout={logout} />
-                </VLEProviders>
+                <ServiceProvider> {/* ✅ Services available only for VLE */}
+                  <VLEProviders>
+                    <VLEDashboard user={user} onLogout={logout} />
+                  </VLEProviders>
+                </ServiceProvider>
               </ProtectedRoute>
             } 
           />

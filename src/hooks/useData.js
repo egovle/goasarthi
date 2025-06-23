@@ -1,4 +1,3 @@
-
 import { useContext, useMemo } from 'react';
 import { BookingContext } from '@/contexts/BookingContext';
 import { LeadContext } from '@/contexts/LeadContext';
@@ -23,9 +22,10 @@ export function useData() {
   const clearAllData = async () => {
     console.warn("Clearing all data. This is a destructive operation.");
     if (!supabase) {
-        console.warn("Supabase client not available. Cannot clear database data.");
-        return;
+      console.warn("Supabase client not available.");
+      return;
     }
+
     try {
       await supabase.from('notifications').delete().neq('id', '00000000-0000-0000-0000-000000000000'); 
       await supabase.from('special_requests').delete().neq('id', '0');
@@ -33,12 +33,10 @@ export function useData() {
       await supabase.from('tasks').delete().neq('id', '0');
       await supabase.from('leads').delete().neq('id', '0');
       await supabase.from('bookings').delete().neq('id', '0');
-      
-      console.warn("User deletion from the client-side is disabled for security reasons. Please manage users directly from your Supabase dashboard.");
 
       await supabase.from('platform_data').update({ value: { balance: 0 } }).eq('id', 'commission_balance');
-      
-      console.log("All data cleared from Supabase tables (where applicable). Admin users preserved.");
+
+      console.log("All applicable data cleared.");
     } catch (error) {
       console.error("Error during clearAllData:", error);
     }
@@ -46,14 +44,13 @@ export function useData() {
 
   const downloadFile = async (filePath, fileName) => {
     if (!supabase || !filePath) {
-      console.error("Download failed: Supabase client or file path not available.");
       return { success: false, error: "File path is missing." };
     }
     try {
       const { data, error } = await supabase.storage
         .from('task_documents')
         .download(filePath);
-      
+
       if (error) throw error;
 
       const blob = data;
@@ -67,24 +64,18 @@ export function useData() {
       window.URL.revokeObjectURL(url);
       return { success: true };
     } catch (error) {
-      console.error("Error downloading file:", error);
       return { success: false, error: error.message };
     }
   };
-  
+
   const memoizedValue = useMemo(() => ({
-    services: bookingContext?.services || [],
-    loadingServices: bookingContext?.loading || true,
-    addService: bookingContext?.addService,
-    updateService: bookingContext?.updateService,
-    removeService: bookingContext?.removeService,
-    
+    // ✅ Removed: services-related logic
     bookings: bookingContext?.bookings || [],
     loadingBookings: bookingContext?.loading || true,
     createBooking: bookingContext?.createBooking,
     addDocumentsToBooking: bookingContext?.addDocumentsToBooking,
     updateBookingStatusAndHistory: bookingContext?.updateBookingStatusAndHistory,
-    
+
     leads: leadContext?.leads || [],
     loadingLeads: leadContext?.loading || true,
     createLead: leadContext?.createLead,
@@ -99,7 +90,7 @@ export function useData() {
     addDocumentsToTask: taskContext?.addDocumentsToTask,
     approveCommission: taskContext?.approveCommission,
     rejectCommission: taskContext?.rejectCommission,
-    
+
     getCustomers: userContext?.getCustomers,
     getVLEs: userContext?.getVLEs,
     getUserById: userContext?.getUserById,
@@ -114,7 +105,7 @@ export function useData() {
     loadingComplaints: complaintContext?.loading || true,
     createComplaint: complaintContext?.createComplaint,
     resolveComplaint: complaintContext?.resolveComplaint,
-    
+
     specialRequests: specialRequestContext?.specialRequests || [],
     loadingSpecialRequests: specialRequestContext?.loading || true,
     createSpecialRequest: specialRequestContext?.createSpecialRequest,
@@ -143,7 +134,16 @@ export function useData() {
 
     clearAllData,
     downloadFile,
-  }), [bookingContext, leadContext, taskContext, userContext, complaintContext, specialRequestContext, walletContext, notificationContext]);
+  }), [
+    bookingContext,
+    leadContext,
+    taskContext,
+    userContext,
+    complaintContext,
+    specialRequestContext,
+    walletContext,
+    notificationContext
+  ]);
 
   return memoizedValue;
 }

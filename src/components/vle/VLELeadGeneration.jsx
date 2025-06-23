@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useData } from '@/hooks/useData';
+import { useServices } from '@/contexts/ServiceContext';
 import { UserPlus, FileText, Upload, Trash2, Send, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -16,7 +16,8 @@ export function VLELeadGeneration({ user, onLeadGenerated }) {
   const [selectedService, setSelectedService] = useState('');
   const [documents, setDocuments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { services, createLead } = useData();
+  const { createLead } = useData();
+  const { services, loadingServices } = useServices();
   const { toast } = useToast();
   const fileInputRef = useRef(null);
 
@@ -64,7 +65,7 @@ export function VLELeadGeneration({ user, onLeadGenerated }) {
     setIsSubmitting(true);
     try {
       const result = await createLead(selectedService, user.id, customerName, customerPhone, documents);
-      
+
       if(result.success && result.lead) {
           toast({ title: "Lead Created Successfully!", description: `Lead ID: ${result.lead.id}. It's now pending admin assignment.` });
           setCustomerName('');
@@ -73,14 +74,18 @@ export function VLELeadGeneration({ user, onLeadGenerated }) {
           setDocuments([]);
           if(onLeadGenerated) onLeadGenerated(result.lead);
       } else {
-          toast({ title: "Lead Creation Failed", description: result.error || "Could not create lead. Ensure you have sufficient wallet balance for the service fee.", variant: "destructive"});
+          toast({ title: "Lead Creation Failed", description: result.error || "Could not create lead. Ensure you have sufficient wallet balance for the service fee.", variant: "destructive" });
       }
     } catch (error) {
-        toast({ title: "An Error Occurred", description: "Something went wrong. Please try again.", variant: "destructive"});
+        toast({ title: "An Error Occurred", description: "Something went wrong. Please try again.", variant: "destructive" });
     } finally {
         setIsSubmitting(false);
     }
   };
+
+  if (loadingServices) {
+    return <div className="text-center text-slate-500">Loading services...</div>;
+  }
 
   return (
     <motion.div
