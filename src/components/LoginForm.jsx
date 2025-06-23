@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { LogIn, Mail, Lock, PhoneCall, ShieldCheck, UserPlus, UserCircle, UserCog, Briefcase, DatabaseZap } from 'lucide-react';
+import { LogIn, Mail, Lock, PhoneCall, ShieldCheck, UserPlus, UserCircle, UserCog, Briefcase } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth.jsx';
 import { motion } from 'framer-motion';
@@ -15,7 +15,6 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  
 
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
@@ -68,21 +67,6 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
     }
   };
 
-  const handleSeedUsers = async () => {
-    setLoading(true);
-    toast({ title: 'Initializing Database...', description: 'Please wait while we set up the demo users.' });
-    const result = await seedUsers();
-    setLoading(false);
-    toast({
-      title: result.errorCount > 0 ? 'Setup Complete!' : 'Database Initialized!',
-      description: `${result.successCount} users ready. You can now use Quick Login buttons.`,
-      variant: 'default'
-    });
-    if (result.errors?.length > 0) console.log('Some users may already exist:', result.errors);
-  };
-
-
-
   return (
     <div className="min-h-screen gradient-bg flex items-center justify-center p-4 overflow-hidden">
       <motion.div className="w-full max-w-sm space-y-6" initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: 'easeOut' }}>
@@ -127,15 +111,7 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
           <CardFooter className="flex flex-col space-y-3 pt-4 px-5 pb-5">
             <p className="text-xs text-center text-white/70 font-inter">Or login instantly as:</p>
             <div className="grid grid-cols-2 gap-2 w-full">
-              {adminUser && (
-                <QuickLoginButton role="admin" icon={UserCog} label={`Admin (${adminUser.user_id_custom})`} email={adminUser.email} password={adminUser.password} loading={loading} onClick={handleQuickLogin} spanAll />
-              )}
-              {vleUsers.map(vle => (
-                <QuickLoginButton key={vle.email} role="vle" icon={Briefcase} label={vle.name} email={vle.email} password={vle.password} loading={loading} onClick={handleQuickLogin} />
-              ))}
-              {customerUsers.map(customer => (
-                <QuickLoginButton key={customer.email} role="customer" icon={UserCircle} label={customer.name} email={customer.email} password={customer.password} loading={loading} onClick={handleQuickLogin} />
-              ))}
+              {/* Add QuickLoginButton if needed */}
             </div>
 
             <div className="relative flex py-2 items-center w-full">
@@ -143,10 +119,6 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
               <span className="flex-shrink mx-4 text-white/50 text-xs">First Time?</span>
               <div className="flex-grow border-t border-white/20"></div>
             </div>
-
-            <Button variant="secondary" className="w-full bg-teal-500/20 border-teal-500/50 text-teal-100 hover:bg-teal-500/30" onClick={handleSeedUsers} disabled={loading}>
-              <DatabaseZap className="mr-2 h-4 w-4" /> Initialize Demo Users
-            </Button>
 
             <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
               <DialogTrigger asChild>

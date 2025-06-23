@@ -1,10 +1,7 @@
-
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient.js';
 
 const AuthContext = createContext(null);
-
-
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -52,7 +49,7 @@ export const AuthProvider = ({ children }) => {
     if (error) {
       setLoading(false);
       if (error.message.includes('Email not confirmed')) {
-        return { success: false, error: 'This account has not been confirmed. Please check your email for a confirmation link or contact support.' };
+        return { success: false, error: 'This account has not been confirmed. Please check your email.' };
       }
       return { success: false, error: error.message };
     }
@@ -63,15 +60,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
 
       if (!profile) {
-          await supabase.auth.signOut();
-          return { success: false, error: "Login failed: User profile not found. Please contact support." };
+        await supabase.auth.signOut();
+        return { success: false, error: "Login failed: User profile not found." };
       }
       return { success: true, user: profile };
     }
     setLoading(false);
     return { success: false, error: "An unexpected error occurred." };
   }, []);
-  
+
   const quickLogin = useCallback(async (email, password) => {
     return await login(email, password);
   }, [login]);
@@ -83,20 +80,24 @@ export const AuthProvider = ({ children }) => {
       email: signupData.email,
       password: signupData.password,
       phone: signupData.phone,
-      options: { 
-        data: { 
-          name: signupData.name, 
-          role: 'customer', 
-          address: signupData.address, 
-          user_id_custom, 
-          wallet_balance: 1000, 
-          is_available: true 
-        } 
+      options: {
+        data: {
+          name: signupData.name,
+          role: 'customer',
+          address: signupData.address,
+          user_id_custom,
+          wallet_balance: 1000,
+          is_available: true
+        }
       }
     });
     setLoading(false);
     if (error) return { success: false, error: error.message };
-    return { success: true, user: data.user, message: "Signup successful! If email confirmation is enabled, please check your inbox."};
+    return {
+      success: true,
+      user: data.user,
+      message: "Signup successful! Please check your email if confirmation is required."
+    };
   }, []);
 
   const logout = useCallback(async () => {
@@ -123,86 +124,41 @@ export const AuthProvider = ({ children }) => {
 
   const updateUserDetailsInSupabase = useCallback(async (userId, updatedProfileData) => {
     const { error } = await supabase.from('profiles').update(updatedProfileData).eq('id', userId);
-    if (error) { 
-      console.error("Error updating profile in Supabase:", error); 
-      return false; 
+    if (error) {
+      console.error("Error updating profile in Supabase:", error);
+      return false;
     }
     await refreshUser();
     return true;
   }, [refreshUser]);
 
-  const seedUsers = useCallback(async () => {
-    setLoading(true);
-    let successCount = 0;
-    let errorCount = 0;
-    const errors = [];
-    
-   
-
-    for (const userToSeed of usersToCreate) {
-      try {
-        const { data, error } = await supabase.auth.signUp({
-          email: userToSeed.email,
-          password: userToSeed.password,
-          phone: userToSeed.phone,
-          options: {
-            data: {
-              name: userToSeed.name,
-              role: userToSeed.role,
-              user_id_custom: userToSeed.user_id_custom,
-              center: userToSeed.center,
-              address: userToSeed.address,
-              is_available: userToSeed.is_available !== false,
-              wallet_balance: 1000,
-            }
-          }
-        });
-
-        if (error) {
-          if (error.message.includes('User already registered') || error.message.includes('already been registered')) {
-            successCount++;
-          } else {
-            errorCount++;
-            errors.push(`Error creating ${userToSeed.email}: ${error.message}`);
-          }
-        } else {
-          successCount++;
-        }
-      } catch (err) {
-        errorCount++;
-        errors.push(`Exception creating ${userToSeed.email}: ${err.message}`);
-      }
-    }
-    
-    await supabase.auth.signOut();
-    setUser(null);
-    setIsAuthenticated(false);
-
-    setLoading(false);
-    return { successCount, errorCount, errors };
-  }, []);
-
-  const value = useMemo(() => ({ 
-    user, 
-    login, 
-    quickLogin, 
-    signup, 
-    logout, 
-    loading, 
-    isAuthenticated, 
-    refreshUser, 
-    updateUserDetailsInSupabase, 
-    
-    seedUsers 
-  }), [user, loading, isAuthenticated, login, quickLogin, signup, logout, refreshUser, updateUserDetailsInSupabase, seedUsers]);
+  const value = useMemo(() => ({
+    user,
+    login,
+    quickLogin,
+    signup,
+    logout,
+    loading,
+    isAuthenticated,
+    refreshUser,
+    updateUserDetailsInSupabase,
+  }), [
+    user,
+    login,
+    quickLogin,
+    signup,
+    logout,
+    loading,
+    isAuthenticated,
+    refreshUser,
+    updateUserDetailsInSupabase,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
