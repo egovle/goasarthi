@@ -1,13 +1,12 @@
+// src/components/LoginForm.jsx
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { LogIn, Mail, Lock, PhoneCall, ShieldCheck, UserPlus, UserCircle, UserCog, Briefcase } from 'lucide-react';
+import { LogIn, Mail, Lock, PhoneCall, ShieldCheck, UserPlus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
-import { useAuth } from '@/hooks/useAuth.jsx';
 import { motion } from 'framer-motion';
-import QuickLoginButton from '@/components/vle/components/ui/QuickLoginButton';
 import { Button } from '@/components/ui/button';
 
 export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
@@ -31,20 +30,12 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
     setLoading(false);
   };
 
-  const handleQuickLogin = async (email, password) => {
-    setLoading(true);
-    const result = await onQuickLogin(email, password);
-    handleAuthResult(result);
-    setLoading(false);
-  };
-
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const result = await onSignup({ name: signupName, email: signupEmail, password: signupPassword, phone: signupPhone, address: signupAddress });
     if (result.success && result.message) {
       toast({ title: 'Signup Almost Done!', description: result.message, variant: 'default' });
-      setIsSignupOpen(false);
     } else {
       handleAuthResult(result, 'Signup Successful!');
     }
@@ -83,7 +74,7 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
             <CardTitle className="flex items-center justify-center gap-2 text-xl font-poppins text-white">
               <LogIn className="h-5 w-5" /> Login to Your Portal
             </CardTitle>
-            <CardDescription className="text-white/80 font-inter text-xs">Access services with your credentials or quick login.</CardDescription>
+            <CardDescription className="text-white/80 font-inter text-xs">Access services with your credentials.</CardDescription>
           </CardHeader>
 
           <CardContent className="px-5 pb-5">
@@ -92,14 +83,14 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
                 <Label htmlFor="email" className="login-label">Email Address</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-                  <Input id="email" type="email" placeholder="your.email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="login-input rounded-lg h-11 text-sm" required />
+                  <Input id="email" type="email" placeholder="your.email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="login-input rounded-lg h-11 text-sm placeholder-white/80" required />
                 </div>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="password" className="login-label">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-                  <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="login-input rounded-lg h-11 text-sm" required />
+                  <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="login-input rounded-lg h-11 text-sm placeholder-white/80" required />
                 </div>
               </div>
               <Button type="submit" className="w-full bg-white text-blue-700 hover:bg-white/90 font-semibold text-sm py-2.5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-11" disabled={loading}>
@@ -108,18 +99,7 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
             </form>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-3 pt-4 px-5 pb-5">
-            <p className="text-xs text-center text-white/70 font-inter">Or login instantly as:</p>
-            <div className="grid grid-cols-2 gap-2 w-full">
-              {/* Add QuickLoginButton if needed */}
-            </div>
-
-            <div className="relative flex py-2 items-center w-full">
-              <div className="flex-grow border-t border-white/20"></div>
-              <span className="flex-shrink mx-4 text-white/50 text-xs">First Time?</span>
-              <div className="flex-grow border-t border-white/20"></div>
-            </div>
-
+          <CardFooter className="flex flex-col space-y-3 pt-2 px-5 pb-5">
             <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
               <DialogTrigger asChild>
                 <Button variant="link" className="text-white/80 hover:text-white w-full mt-2 text-xs">
@@ -158,6 +138,11 @@ export function LoginForm({ onLogin, onQuickLogin, onSignup }) {
                 </form>
               </DialogContent>
             </Dialog>
+
+            {/* VLE Registration link */}
+            <Button variant="link" className="text-white/80 hover:text-white w-full text-xs">
+              <UserPlus className="mr-1.5 h-3.5 w-3.5" /> New VLE? Register Here
+            </Button>
           </CardFooter>
         </Card>
 
