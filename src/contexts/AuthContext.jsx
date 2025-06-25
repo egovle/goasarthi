@@ -69,7 +69,8 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  const signup = async ({ email, password, name, phone }) => {
+  // ✅ Updated customer signup
+  const signup = async ({ email, password, name, phone, address }) => {
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
@@ -83,7 +84,11 @@ export const AuthProvider = ({ children }) => {
       id: userId,
       name,
       phone,
+      email,
+      address,
       role: 'customer',
+      joined_date: new Date().toISOString(),
+      is_available: true,
     }]);
 
     if (profileError) {
@@ -102,7 +107,8 @@ export const AuthProvider = ({ children }) => {
     return { success: true };
   };
 
-  const signupVLE = async ({ email, password, name, phone }) => {
+  // ✅ Updated VLE signup
+  const signupVLE = async ({ email, password, name, phone, address }) => {
     setLoading(true);
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
@@ -113,9 +119,14 @@ export const AuthProvider = ({ children }) => {
         id: userId,
         name,
         phone,
+        email,
+        address,
         role: 'vle',
-        approved: true, // ✅ Auto-approved
-        is_available: true
+        approved: true,
+        is_available: true,
+        joined_date: new Date().toISOString(),
+        wallet_balance: 0,
+        transaction_history: [],
       }]);
 
       if (profileError) throw profileError;
