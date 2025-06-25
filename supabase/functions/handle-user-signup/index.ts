@@ -1,46 +1,40 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-console.log("✅ Edge function 'handle-user-signup' is running");
+// index.ts
+import { serve } from 'https://deno.land/std@0.192.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 serve(async (req) => {
-  try {
-    const { record } = await req.json();
+  const { name, phone, address } = await req.json();
+  const authHeader = req.headers.get('Authorization')!;
+  const token = authHeader.split('Bearer ')[1];
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-    const profileData = {
-      id: record.id,
-      email: record.email,
-      role: record.raw_user_meta_data?.role || "customer",
-      name: record.raw_user_meta_data?.name || "",
-      phone: record.raw_user_meta_data?.phone || "",
-      address: record.raw_user_meta_data?.address || "",
-      user_id_custom: record.raw_user_meta_data?.user_id_custom || "",
-      wallet_balance: 1000,
-      is_available: true,
-    };
-
-    const response = await fetch(`${supabaseUrl}/rest/v1/profiles`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${supabaseKey}`,
-        Prefer: "return=representation",
-      },
-      body: JSON.stringify(profileData),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      console.error("❌ Failed to insert profile:", result);
-      return new Response("Insert failed", { status: 500 });
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    {
+      global: { headers: { Authorization: `Bearer ${token}` } }
     }
+  );
 
-    return new Response("✅ Profile created successfully", { status: 200 });
-  } catch (error) {
-    console.error("❌ Function error:", error);
-    return new Response("Server error", { status: 500 });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase.from('profiles').insert({
+    id: user.id,
+    email: user.email,
+    name,
+    phone,
+    address,
+    role: 'customer' // You can adjust this based on context
+  });
+
+  if (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
+
+  return new Response(JSON.stringify({ message: 'Profile created' }), {
+    status: 200,
+  });
 });
