@@ -69,64 +69,65 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  // ✅ Updated customer signup
   const signup = async ({ email, password, name, phone, address }) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      console.error("Signup error:", error.message);
-      setLoading(false);
-      return { success: false, error: error.message };
-    }
-
-    const userId = data.user?.id;
-    const { error: profileError } = await supabase.from('profiles').insert([{
-      id: userId,
-      name,
-      phone,
-      email,
-      address,
-      role: 'customer',
-      joined_date: new Date().toISOString(),
-      is_available: true,
-    }]);
-
-    if (profileError) {
-      console.error("Profile insert error:", profileError.message);
-      setLoading(false);
-      return { success: false, error: profileError.message };
-    }
-
-    const profile = await fetchUserProfile(userId);
-    if (profile) {
-      setUser(profile);
-      setIsAuthenticated(true);
-    }
-
-    setLoading(false);
-    return { success: true };
-  };
-
-  // ✅ Updated VLE signup
-  const signupVLE = async ({ email, password, name, phone, address }) => {
-    setLoading(true);
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
-      if (signUpError) throw signUpError;
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
 
       const userId = data.user?.id;
       const { error: profileError } = await supabase.from('profiles').insert([{
         id: userId,
         name,
-        phone,
         email,
+        phone,
+        address,
+        role: 'customer',
+        user_id_custom: null,
+        wallet_balance: 0,
+        bank_accounts: [],
+        transaction_history: [],
+        is_available: true,
+        joined_date: new Date()
+      }]);
+
+      if (profileError) throw profileError;
+
+      const profile = await fetchUserProfile(userId);
+      if (profile) {
+        setUser(profile);
+        setIsAuthenticated(true);
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("Signup error:", err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signupVLE = async ({ email, password, name, phone, address }) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+
+      const userId = data.user?.id;
+      const { error: profileError } = await supabase.from('profiles').insert([{
+        id: userId,
+        name,
+        email,
+        phone,
         address,
         role: 'vle',
-        approved: true,
-        is_available: true,
-        joined_date: new Date().toISOString(),
+        user_id_custom: null,
         wallet_balance: 0,
+        bank_accounts: [],
         transaction_history: [],
+        is_available: true,
+        joined_date: new Date()
       }]);
 
       if (profileError) throw profileError;
